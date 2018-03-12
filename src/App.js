@@ -33,7 +33,7 @@ const styles = theme => ({
   },
   drawerPaper: {
     position: 'relative',
-    hieght: '100%',
+    height: '100%',
     width: 320,
   },
   drawerHeader: {
@@ -42,14 +42,14 @@ const styles = theme => ({
     paddingRight: theme.spacing.unit * 3,
   },
   chatsList: {
-    height: 'calc(100% - 58px)',
+    height: 'calc(100% - 56px)',
     overflowY: 'scroll',
   },
   newChatButton: {
-    position:  'absolute',
+    position: 'absolute',
     left: 'auto',
     right: theme.spacing.unit * 3,
-    bottom: theme.spacing.unit * 3 + 48 // bottom nav
+    bottom: theme.spacing.unit * 3 + 48, // + bottom navigation
   },
   chatLayout: {
     display: 'flex',
@@ -81,116 +81,110 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 3}px`, 
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 3}px`,
   },
-  messageWrapperFromMe: {
+  messageWrappperFromMe: {
     justifyContent: 'flex-end',
   },
-  message:{
+  message: {
     maxWidth: '70%',
     minWidth: '10%',
     padding: theme.spacing.unit,
     marginLeft: theme.spacing.unit * 2,
   },
-
   messageFromMe: {
     marginRight: theme.spacing.unit * 2,
     backgroundColor: '#e6dcff'
-  }
-  
+  },
 });
 
 class App extends React.Component {
-
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.root}>
-        <div className={classes.appFrame}>
-          <AppBar color="primary" className={classes.appBar} >
-            <Toolbar>
-              <Typography variant="title" color="inherit" noWrap>
-                24zeroes chat
-              </Typography>
-            </Toolbar>
-          </AppBar>
-
-          <Drawer
-            variant="permanent"
-            classes={{
-              paper: classes.drawerPaper,
-            }}
+        <AppBar color="primary" className={classes.appBar}>
+          <Toolbar>
+            <Typography variant="title" color="inherit" noWrap>
+              DogeCodes React Chat
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          variant="permanent"
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <TextField
+              fullWidth
+              margin="normal"
+              placeholder="Search chats..."
+            />
+          </div>
+          <Divider />
+          <List className={classes.chatsList}>
+            {chats.map((chat, index) => (
+              <ListItem key={index} button>
+                <Avatar>{chat.title && chat.title[0]}</Avatar>
+                <ListItemText primary={chat.title}/>
+              </ListItem>
+            ))}
+          </List>
+          <Button
+            variant="fab"
+            color="primary"
+            className={classes.newChatButton}
           >
-            <div className={classes.drawerHeader} >
-              <TextField
-                fullWidth
-                margin='normal'
-                placeholder='Search...'
-              />
-            </div>
-            <Divider />
-            <List className={classes.chatsList}>
-              {chats.map((chat, index) => (
-                <ListItem key={index} button>
-                  <Avatar>{chat.title && chat.title[0]}</Avatar>
-                  <ListItemText primary={chat.title}/>
-                </ListItem>
-              ))}
-            </List>
-            <Button
-              variant="fab"
-              color="primary"
-              className={classes.newChatButton}
-            >
-              <AddIcon />
-            </Button>
-            <BottomNavigation showLabels>
-              <BottomNavigationAction label="My Chats" icon={<RestoreIcon />} />
-              <BottomNavigationAction label="Explore" icon={<ExploreIcon />} />
-            </BottomNavigation>
-          </Drawer>
-          <main className={classes.chatLayout}>
-            <div className={classes.messagesWrapper} >
+            <AddIcon />
+          </Button>
+          <BottomNavigation showLabels>
+            <BottomNavigationAction label="My Chats" icon={<RestoreIcon />} />
+            <BottomNavigationAction label="Explore" icon={<ExploreIcon />} />
+          </BottomNavigation>
+        </Drawer>
+        <main className={classes.chatLayout}>
+          <div className={classes.messagesWrapper}>
             {messages && messages.map((message, index) => {
               const isMessageFromMe = message.sender === 'me';
 
-                const userAvatar = (
-                  <Avatar>
-                    {message.sender[0]}
-                  </Avatar>
-                );
+              const userAvatar = (
+                <Avatar>
+                  {message.sender[0]}
+                </Avatar>
+              );
 
-                return (
-                  // <div className={classNames(classes.messageWrapper, isMessageFromMe && classes.messageWrappperFromMe)}>
-                  <div key={index} className={[
-                    classes.messageWrapper,
-                    isMessageFromMe ? classes.messageWrappperFromMe : ''
+              return (
+                // <div className={classNames(classes.messageWrapper, isMessageFromMe && classes.messageWrappperFromMe)}>
+                <div key={index} className={[
+                  classes.messageWrapper,
+                  isMessageFromMe ? classes.messageWrappperFromMe : ''
+                ].join(' ')}>
+                  {!isMessageFromMe && userAvatar}
+                  <Paper className={[
+                    classes.message,
+                    isMessageFromMe ? classes.messageFromMe : ''
                   ].join(' ')}>
-                    {!isMessageFromMe && userAvatar}
-                    <Paper className={[
-                      classes.message,
-                      isMessageFromMe ? classes.messageFromMe : ''
-                    ].join(' ')}>
-                      <Typography variant="caption">
-                        {message.sender}
-                      </Typography>
-                      <Typography variant="body1">
-                        {message.content}
-                      </Typography>
-                    </Paper>
-                    {isMessageFromMe && userAvatar}
-                  </div>
-                );
-              })}
-            </div>
-            <div className={classes.messageInputWrapper}>
-              <Paper className={classes.messageInput} elevation={6}>
-                <Input fullWidth placeholder="Type your message…"/>
-              </Paper>
-            </div>
-          </main>
-        </div>
+                    <Typography variant="caption">
+                      {message.sender}
+                    </Typography>
+                    <Typography variant="body1">
+                      {message.content}
+                    </Typography>
+                  </Paper>
+                  {isMessageFromMe && userAvatar}
+                </div>
+              );
+            })}
+          </div>
+          <div className={classes.messageInputWrapper}>
+            <Paper className={classes.messageInput} elevation={6}>
+              <Input fullWidth placeholder="Type your message…"/>
+            </Paper>
+          </div>
+        </main>
       </div>
     );
   }
